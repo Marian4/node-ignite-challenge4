@@ -164,7 +164,7 @@
         "/users/{user_id}": {
             "get": {
                 "tags": ["users"],
-                "summary": "get a user",
+                "summary": "get an user",
                 "description": "Returns all the informations about an user if it exists",
                 "parameters": [{"in": "path", "name": "user_id", "description": "Id of an existing user"}],
                 "responses": {
