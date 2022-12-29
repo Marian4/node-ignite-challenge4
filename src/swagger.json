@@ -1,0 +1,283 @@
+{
+    "openapi": "3.0.0",
+    "info":{
+        "title": "Users register system",
+        "description": "An api for creating and listing users",
+        "version": "1.0.0",
+        "contact": {
+            "email": "mraes.mariana@gmail.com"
+        }
+    },
+    "paths": {
+        "/users": {
+            "post": {
+                "tags": ["users"],
+                "summary": "Create a new user",
+                "description": "Create a new user if the email provided does not exist in the database yet. By default, an user is created as a non admin.",
+                "requestBody": {
+                    "content":{
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    }
+                                },
+                                "example": {
+                                    "name": "Mariana",
+                                    "email": "mariana@gmail.com"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "id":{
+                                            "type": "string"
+                                        },
+                                        "admin":{
+                                            "type": "boolean",
+                                            "default": false
+                                        },
+                                        "name":{
+                                            "type": "string"
+                                        },
+                                        "email":{
+                                            "type": "string"
+                                        },
+                                        "created_at":{
+                                            "type": "string",
+                                            "format": "date"
+                                        },
+                                        "updated_at":{
+                                            "type": "string",
+                                            "format": "date"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "User already exists",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type":"object",
+                                    "properties":{
+                                        "error":{
+                                            "type":"string",
+                                            "default": "User already exists"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": ["users"],
+                "summary": "get all users",
+                "description": "Returns all users if the user who required the list is an admin",
+                "parameters": [{"in": "header", "name": "user_id", "description": "Id of an existing user"}],
+                "responses": {
+                    "200":{
+                        "description": "Success",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type":"array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties":{
+                                            "id":{
+                                                "type": "string"
+                                            },
+                                            "admin":{
+                                                "type": "boolean",
+                                                "default": false
+                                            },
+                                            "name":{
+                                                "type": "string"
+                                            },
+                                            "email":{
+                                                "type": "string"
+                                            },
+                                            "created_at":{
+                                                "type": "string",
+                                                "format": "date"
+                                            },
+                                            "updated_at":{
+                                                "type": "string",
+                                                "format": "date"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "User who required the list is not an admin or does not exist",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "oneOf": [{
+                                            "type":"object",
+                                            "properties":{
+                                                "error":{
+                                                    "type": "string",
+                                                    "default": "Only admins are supposed to list all users"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "type":"object",
+                                            "properties":{
+                                                "error":{
+                                                    "type": "string",
+                                                    "default": "User provided does not exist"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        },
+        "/users/{user_id}": {
+            "get": {
+                "tags": ["users"],
+                "summary": "get a user",
+                "description": "Returns all the informations about an user if it exists",
+                "parameters": [{"in": "path", "name": "user_id", "description": "Id of an existing user"}],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "id":{
+                                            "type": "string"
+                                        },
+                                        "admin":{
+                                            "type": "boolean",
+                                            "default": false
+                                        },
+                                        "name":{
+                                            "type": "string"
+                                        },
+                                        "email":{
+                                            "type": "string"
+                                        },
+                                        "created_at":{
+                                            "type": "string",
+                                            "format": "date"
+                                        },
+                                        "updated_at":{
+                                            "type": "string",
+                                            "format": "date"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type":"object",
+                                    "properties":{
+                                        "error":{
+                                            "type": "string",
+                                            "default": "User not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{user_id}/admin": {
+            "patch": {
+                "tags": ["users"],
+                "summary": "Turn an user admin",
+                "description": "Turns an existing user admin",
+                "parameters": [{"in": "path", "name": "user_id", "description": "Id of an existing user"}],
+                "responses": {
+                    "200": {
+                        "description": "Turned admin",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "id":{
+                                            "type": "string"
+                                        },
+                                        "admin":{
+                                            "type": "boolean",
+                                            "default": true
+                                        },
+                                        "name":{
+                                            "type": "string"
+                                        },
+                                        "email":{
+                                            "type": "string"
+                                        },
+                                        "created_at":{
+                                            "type": "string",
+                                            "format": "date"
+                                        },
+                                        "updated_at":{
+                                            "type": "string",
+                                            "format": "date"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User does not exist",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type":"object",
+                                    "properties":{
+                                        "error":{
+                                            "type": "string",
+                                            "default": "User does not exist"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
